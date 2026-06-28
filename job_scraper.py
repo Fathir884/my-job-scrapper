@@ -24,20 +24,19 @@ def generate_cover_letter(job_title):
     if not GEMINI_API_KEY:
         return "Fitur AI belum aktif. Tambahkan GEMINI_API_KEY di GitHub Secrets."
     try:
-        model = genai.GenerativeModel("gemini-pro")
-        prompt = f"""
-        Write a very short, one-paragraph cover letter snippet (max 3 sentences) in English applying for the '{job_title}' role.
-        My profile: Fathir Ramadhan, final-year Library Science student at UIN Jakarta. 
-        Experience: National Library of Indonesia (Archive Digitization, React/Node.js web dev), KOL Specialist at Exioncare.
-        Skills: React.js, Node.js, Admin, Archives, Communication.
-        Make it punchy, professional, and directly highlight why my unique background fits this role. Do not include placeholders like [Company Name] or greetings/sign-offs, just the core paragraph.
-        """
-        response = model.generate_content(prompt)
-        # Sleep slightly to respect rate limits
-        time.sleep(1)
-        return response.text.strip()
+        prompt = f"Write a very short, one-paragraph cover letter snippet (max 3 sentences) in English applying for the '{job_title}' role. My profile: Fathir Ramadhan, final-year Library Science student at UIN Jakarta. Experience: National Library of Indonesia (Archive Digitization, React/Node.js web dev), KOL Specialist at Exioncare. Skills: React.js, Node.js, Admin, Archives, Communication. Make it punchy, professional, and directly highlight why my unique background fits this role. Do not include placeholders like [Company Name] or greetings/sign-offs, just the core paragraph."
+        
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+        headers = {'Content-Type': 'application/json'}
+        data = {"contents": [{"parts": [{"text": prompt}]}]}
+        
+        response = requests.post(url, headers=headers, json=data, timeout=15)
+        if response.status_code == 200:
+            return response.json()['candidates'][0]['content']['parts'][0]['text'].strip()
+        else:
+            return f"API Error {response.status_code}: {response.text[:100]}"
     except Exception as e:
-        return f"AI Error: {e}"
+        return f"Request Error: {e}"
 
 def scrape_kalibrr(keyword, location):
     print(f"Scraping Kalibrr for '{keyword}' in '{location}'...")

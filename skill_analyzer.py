@@ -20,33 +20,30 @@ KEYWORDS_TO_TRACK = [
 
 def analyze_market_skills():
     print("Menganalisis tren skill pasar...")
-    # Kita ambil sampel 3 halaman pertama untuk kata kunci umum "IT" dan "Marketing"
-    search_queries = ["frontend", "backend", "marketing", "admin"]
-    text_corpus = ""
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+    skill_counts = {}
     
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-    }
-    
-    for query in search_queries:
+    for skill in KEYWORDS_TO_TRACK:
         try:
-            # Menggunakan route lokasi yang pasti valid (jakarta)
-            url = f"https://www.kalibrr.com/job-board/te/{query}/l/jakarta/1"
+            # Mencari masing-masing skill secara langsung di Jakarta
+            kw_url = skill.replace(" ", "-").lower()
+            url = f"https://www.kalibrr.com/job-board/te/{kw_url}/l/jakarta/1"
             response = requests.get(url, headers=headers, timeout=10)
+            
             if response.status_code == 200:
                 soup = BeautifulSoup(response.text, "lxml")
-                # Kita ambil teks dari semua elemen yang berpotensi memiliki deskripsi/judul
-                text_corpus += " " + soup.get_text().lower()
+                # Menghitung berapa banyak loker (job cards) yang muncul di halaman pertama
+                links = soup.find_all("a", href=True)
+                job_links = set()
+                for a in links:
+                    if "/jobs/" in a['href'] and "/c/" in a['href']:
+                        job_links.add(a['href'])
+                
+                score = len(job_links)
+                if score > 0:
+                    skill_counts[skill] = score
         except Exception as e:
-            print(f"Error pada query {query}: {e}")
-            
-    # Menghitung kemunculan kata kunci
-    skill_counts = {}
-    for skill in KEYWORDS_TO_TRACK:
-        # Gunakan regex agar cocokan kata pas (boundaries) atau sekadar sub-string
-        count = text_corpus.count(skill.lower())
-        if count > 0:
-            skill_counts[skill] = count
+            print(f"Error pada skill {skill}: {e}")
             
     # Urutkan dari yang terbanyak
     sorted_skills = sorted(skill_counts.items(), key=lambda item: item[1], reverse=True)
