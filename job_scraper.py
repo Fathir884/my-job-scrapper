@@ -26,7 +26,7 @@ def generate_cover_letter(job_title):
     try:
         prompt = f"Write a very short, one-paragraph cover letter snippet (max 3 sentences) in English applying for the '{job_title}' role. My profile: Fathir Ramadhan, final-year Library Science student at UIN Jakarta. Experience: National Library of Indonesia (Archive Digitization, React/Node.js web dev), KOL Specialist at Exioncare. Skills: React.js, Node.js, Admin, Archives, Communication. Make it punchy, professional, and directly highlight why my unique background fits this role. Do not include placeholders like [Company Name] or greetings/sign-offs, just the core paragraph."
         
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
         headers = {'Content-Type': 'application/json'}
         data = {"contents": [{"parts": [{"text": prompt}]}]}
         
