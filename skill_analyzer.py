@@ -30,7 +30,8 @@ def analyze_market_skills():
     
     for query in search_queries:
         try:
-            url = f"https://www.kalibrr.com/job-board/te/{query}/co/Indonesia/1"
+            # Menggunakan route lokasi yang pasti valid (jakarta)
+            url = f"https://www.kalibrr.com/job-board/te/{query}/l/jakarta/1"
             response = requests.get(url, headers=headers, timeout=10)
             if response.status_code == 200:
                 soup = BeautifulSoup(response.text, "lxml")

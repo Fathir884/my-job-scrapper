@@ -24,7 +24,7 @@ def generate_cover_letter(job_title):
     if not GEMINI_API_KEY:
         return "Fitur AI belum aktif. Tambahkan GEMINI_API_KEY di GitHub Secrets."
     try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-pro")
         prompt = f"""
         Write a very short, one-paragraph cover letter snippet (max 3 sentences) in English applying for the '{job_title}' role.
         My profile: Fathir Ramadhan, final-year Library Science student at UIN Jakarta. 
